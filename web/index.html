@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mi bebé</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#FBF6F1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mi bebé">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
 <style>
 :root{
   --bg:#FBF6F1; --card:#fff; --ink:#2B2A33; --muted:#7A7685; --line:#EDE6DF;
@@ -13,12 +21,15 @@
 [hidden]{display:none!important}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px}
 body.lock{overflow:hidden}
-#app{padding:12px 16px calc(92px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto}
+#app{padding:calc(12px + env(safe-area-inset-top)) 16px calc(92px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto}
+body.noTabs #tabs{display:none}
 button{font-family:inherit;cursor:pointer}
+button:disabled{opacity:.6}
 h1{font-size:22px;margin:0}
 h2{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:22px 4px 8px}
 h3{font-size:20px;margin:0 0 14px}
 .top{display:flex;align-items:center;justify-content:space-between;margin:4px 0 14px}
+.sync{font-size:13px;color:var(--muted);font-weight:600;margin-top:2px}
 .icon{border:0;background:var(--card);border-radius:14px;width:44px;height:44px;font-size:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;border:0;border-radius:26px;color:#fff;margin-bottom:12px;box-shadow:0 6px 16px rgba(0,0,0,.14);transition:transform .08s}
 .big:active{transform:scale(.97)}
@@ -48,7 +59,7 @@ h3{font-size:20px;margin:0 0 14px}
 .chip.on{background:var(--milk);color:#fff}
 .dates{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .dates div{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:600}
-input[type=date],input[type=datetime-local],input[type=number],textarea{font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+input[type=date],input[type=datetime-local],input[type=number],input[type=email],input[type=password],textarea{font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
 .bigml{font-size:44px;font-weight:800;color:var(--milk);line-height:1.1}
 .bigml small{font-size:20px;font-weight:700}
 .chart{display:flex;align-items:flex-end;gap:3px;height:150px;margin-top:14px}
@@ -60,6 +71,7 @@ input[type=date],input[type=datetime-local],input[type=number],textarea{font:inh
 .day{display:flex;justify-content:space-between;align-items:baseline;margin:20px 4px 8px}
 .day b{font-size:16px;text-transform:capitalize}
 .day span{font-size:13px;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);text-align:center;margin:10px 0}
 #tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
 #tabs button{flex:1;border:0;background:none;padding:10px 0 8px;font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
 #tabs button span{font-size:22px}
@@ -67,6 +79,7 @@ input[type=date],input[type=datetime-local],input[type=number],textarea{font:inh
 .back{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:10}
 .sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-radius:26px 26px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom));z-index:11;max-height:90vh;overflow:auto;max-width:560px;margin:0 auto}
 .sheet p{margin:-6px 0 12px}
+.sheet h2{margin:24px 0 10px}
 .muted{color:var(--muted)}
 .field{margin-bottom:14px}
 .lab{display:block;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:6px}
@@ -78,15 +91,19 @@ input[type=date],input[type=datetime-local],input[type=number],textarea{font:inh
 .seg button{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px;font-size:16px;font-weight:700;color:var(--ink)}
 .seg button.on{border-color:var(--milk);background:var(--milk-soft);color:var(--milk)}
 .btns{display:flex;gap:10px;margin-top:6px}
-.btn{flex:1;border:0;border-radius:16px;padding:16px;font-size:17px;font-weight:800}
+.btn{flex:1;border:0;border-radius:16px;padding:16px;font-size:17px;font-weight:800;width:100%}
 .btn.pri{background:var(--milk);color:#fff}
+.btn.sec{background:var(--milk-soft);color:var(--milk);margin-bottom:10px}
 .btn.del{background:#fde8e8;color:var(--danger)}
+.center{min-height:70vh;display:flex;flex-direction:column;justify-content:center;gap:12px;text-align:center}
+.logo{font-size:56px}
+.err{color:var(--danger);font-weight:600;min-height:22px}
 #toast{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:20;background:#2B2A33;color:#fff;border-radius:16px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:536px;margin:0 auto;box-shadow:0 6px 18px rgba(0,0,0,.3)}
 #toast button{border:0;background:none;color:#9DBBFF;font-weight:800;font-size:15px;padding:6px 4px}
 </style>
 </head>
-<body>
-<main id="app"></main>
+<body class="noTabs">
+<main id="app"><div class="center"><div class="logo">🍼</div><div class="muted">Cargando…</div></div></main>
 <nav id="tabs">
   <button data-tab="home"><span>🏠</span>Inicio</button>
   <button data-tab="stats"><span>📊</span>Resumen</button>
@@ -95,9 +112,9 @@ input[type=date],input[type=datetime-local],input[type=number],textarea{font:inh
 <div id="sheet-root"></div>
 <div id="toast" hidden></div>
 
+<script src="config.js"></script>
 <script>
 'use strict';
-var KEY = 'mibebe.v1';
 var H = 3600000, DAY = 86400000;
 function pad(n){ return String(n).padStart(2, '0'); }
 function $(s){ return document.querySelector(s); }
@@ -107,19 +124,6 @@ function esc(s){
   });
 }
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
-
-/* ---------- datos ---------- */
-function loadDb(){
-  try {
-    var d = JSON.parse(localStorage.getItem(KEY));
-    if (d && Array.isArray(d.events)) {
-      return { settings: Object.assign({ defaultMl: null }, d.settings), events: d.events };
-    }
-  } catch (e) {}
-  return { settings: { defaultMl: null }, events: [] };
-}
-var db = loadDb();
-function saveDb(){ try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} }
 
 /* ---------- lógica (fechas, resumen) ---------- */
 function startOfDay(ts){ var d = new Date(ts); d.setHours(0, 0, 0, 0); return d.getTime(); }
@@ -148,9 +152,9 @@ function rangeBounds(kind, now, custom){
   return { from: f, to: e.getTime() - 1, days: Math.max(1, Math.round((e.getTime() - f) / DAY)) };
 }
 function inRange(ev, r){ return ev.ts >= r.from && ev.ts <= r.to; }
-function summarize(events, r){
+function summarize(list, r){
   var ml = 0, feeds = 0, poops = 0;
-  events.forEach(function(e){
+  list.forEach(function(e){
     if (!inRange(e, r)) return;
     if (e.type === 'feed') { feeds++; ml += e.ml || 0; }
     else if (e.type === 'poop') poops++;
@@ -158,7 +162,7 @@ function summarize(events, r){
   return { ml: ml, feeds: feeds, poops: poops, days: r.days,
            avgFeed: feeds ? Math.round(ml / feeds) : 0, avgDay: Math.round(ml / r.days) };
 }
-function buckets(events, r){
+function buckets(list, r){
   var out = [], i, s;
   if (r.to - r.from <= DAY + H) {
     var st = startOfHour(r.from), n = Math.ceil((r.to - st) / H);
@@ -171,7 +175,7 @@ function buckets(events, r){
     }
   }
   out.forEach(function(b){ b.ml = 0; b.feeds = 0; b.poops = 0; });
-  events.forEach(function(e){
+  list.forEach(function(e){
     if (!inRange(e, r)) return;
     for (var k = 0; k < out.length; k++) {
       if (e.ts >= out[k].start && e.ts < out[k].end) {
@@ -182,6 +186,20 @@ function buckets(events, r){
     }
   });
   return out;
+}
+function buildCsv(list){
+  var rows = ['Fecha;Hora;Tipo;Cantidad (ml);Nota'];
+  list.slice().sort(function(a, b){ return a.ts - b.ts; }).forEach(function(e){
+    var d = new Date(e.ts);
+    rows.push([
+      pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear(),
+      pad(d.getHours()) + ':' + pad(d.getMinutes()),
+      e.type === 'feed' ? 'Toma' : 'Caca',
+      e.type === 'feed' ? (e.ml || 0) : '',
+      '"' + String(e.note || '').replace(/"/g, '""').replace(/\r?\n/g, ' ') + '"'
+    ].join(';'));
+  });
+  return rows.join('\r\n');
 }
 
 /* ---------- formato ---------- */
@@ -203,35 +221,60 @@ function ago(ts, now){
   var d = Math.floor(h / 24);
   return 'hace ' + d + ' d' + (h % 24 ? ' ' + (h % 24) + ' h' : '');
 }
-function sorted(){ return db.events.slice().sort(function(a, b){ return b.ts - a.ts; }); }
 
-/* ---------- estado de la interfaz ---------- */
+/* ---------- estado ---------- */
+var mode = 'loading', loginApi = null, store = null;
+var events = [], settings = { defaultMl: null }, askedDefault = false;
+var syncPending = false, online = navigator.onLine !== false, olderLoading = false;
 var tab = 'home', range = '24h', custom = { from: '', to: '' };
 var sheetOpen = false, sheetType = 'feed', lastQuick = { feed: 0, poop: 0 };
 
+function sorted(){ return events.slice().sort(function(a, b){ return b.ts - a.ts; }); }
+
 function evRow(e){
   var isFeed = e.type === 'feed';
-  return '<button class="ev" data-act="edit" data-id="' + e.id + '">' +
+  return '<button class="ev" data-act="edit" data-id="' + esc(e.id) + '">' +
     '<span class="ev-ico ' + e.type + '">' + (isFeed ? '🍼' : '💩') + '</span>' +
-    '<span class="ev-main"><b>' + (isFeed ? fmtNum(e.ml) + ' ml' : 'Caca') + '</b>' +
+    '<span class="ev-main"><b>' + (isFeed ? fmtNum(e.ml || 0) + ' ml' : 'Caca') + '</b>' +
     (e.note ? '<em>' + esc(e.note) + '</em>' : '') + '</span>' +
     '<span class="ev-time">' + fmtTime(e.ts) + '</span></button>';
 }
+function syncLine(){
+  if (!online) return '<div class="sync">📴 Sin conexión · se sincronizará al volver</div>';
+  if (syncPending) return '<div class="sync">⏳ Sincronizando…</div>';
+  return '';
+}
 
+/* ---------- pantallas de acceso ---------- */
+function viewLoading(){ return '<div class="center"><div class="logo">🍼</div><div class="muted">Cargando…</div></div>'; }
+function viewSetup(){
+  return '<div class="center"><div class="logo">⚙️</div><h1>Falta configurar Firebase</h1>' +
+    '<div class="muted">Hay que poner la configuración del proyecto en config.js.</div></div>';
+}
+function viewLogin(){
+  return '<div class="center"><div class="logo">🍼</div><h1>Mi bebé</h1>' +
+    '<div class="muted">Entra con la cuenta familiar</div>' +
+    '<input id="l-email" type="email" autocomplete="username" autocapitalize="off" placeholder="Email">' +
+    '<input id="l-pass" type="password" autocomplete="current-password" placeholder="Contraseña">' +
+    '<button class="btn pri" data-act="login">Entrar</button><div class="err" id="l-err"></div></div>';
+}
+
+/* ---------- pantallas principales ---------- */
 function viewHome(){
   var now = Date.now(), evs = sorted();
   var lastFeed = evs.filter(function(e){ return e.type === 'feed'; })[0];
   var lastPoop = evs.filter(function(e){ return e.type === 'poop'; })[0];
-  var t = summarize(db.events, rangeBounds('today', now));
-  var ml = db.settings.defaultMl;
-  return '<header class="top"><h1>🍼 Mi bebé</h1><button class="icon" data-act="settings" aria-label="Ajustes">⚙️</button></header>' +
+  var t = summarize(events, rangeBounds('today', now));
+  var ml = settings.defaultMl;
+  return '<header class="top"><div><h1>🍼 Mi bebé</h1>' + syncLine() + '</div>' +
+      '<button class="icon" data-act="settings" aria-label="Ajustes">⚙️</button></header>' +
     '<button class="big milk" data-act="feed"><span class="t">🍼 Toma</span><span class="s">' +
       (ml ? fmtNum(ml) + ' ml' : 'Toca para definir la cantidad') + '</span></button>' +
     '<button class="big poop" data-act="poop"><span class="t">💩 Caca</span></button>' +
     '<button class="link" data-act="new">＋ Otra cantidad, hora o nota…</button>' +
     '<div class="two">' +
       '<div class="card"><div class="k">Última toma</div><div class="v">' + (lastFeed ? ago(lastFeed.ts, now) : '—') + '</div>' +
-        '<div class="sub">' + (lastFeed ? fmtTime(lastFeed.ts) + ' · ' + fmtNum(lastFeed.ml) + ' ml' : 'Sin registros') + '</div></div>' +
+        '<div class="sub">' + (lastFeed ? fmtTime(lastFeed.ts) + ' · ' + fmtNum(lastFeed.ml || 0) + ' ml' : 'Sin registros') + '</div></div>' +
       '<div class="card"><div class="k">Última caca</div><div class="v">' + (lastPoop ? ago(lastPoop.ts, now) : '—') + '</div>' +
         '<div class="sub">' + (lastPoop ? fmtTime(lastPoop.ts) : 'Sin registros') + '</div></div>' +
     '</div>' +
@@ -262,11 +305,20 @@ function chartHtml(b){
   }).join('') + '</div>';
 }
 
+function loadOlder(from){
+  if (!store || olderLoading || from >= store.loadedFrom()) return;
+  olderLoading = true;
+  store.ensureFrom(from).then(function(){ olderLoading = false; render(); },
+    function(e){ olderLoading = false; render(); toast(errText(e)); });
+  setTimeout(render, 0);
+}
+
 function viewStats(){
   var now = Date.now();
   var chips = [['24h', '24 h'], ['today', 'Hoy'], ['7d', '7 días'], ['30d', '30 días'], ['custom', 'Fechas']];
   var r = rangeBounds(range, now, custom);
-  var s = summarize(db.events, r), b = buckets(db.events, r);
+  if (store && r.from < store.loadedFrom()) setTimeout(function(){ loadOlder(r.from); }, 0);
+  var s = summarize(events, r), b = buckets(events, r);
   return '<header class="top"><h1>📊 Resumen</h1></header>' +
     '<div class="chips">' + chips.map(function(c){
       return '<button class="chip' + (range === c[0] ? ' on' : '') + '" data-act="range" data-v="' + c[0] + '">' + c[1] + '</button>';
@@ -274,6 +326,7 @@ function viewStats(){
     (range === 'custom'
       ? '<div class="dates"><div>Desde<input type="date" id="d-from" value="' + esc(custom.from) + '"></div>' +
         '<div>Hasta<input type="date" id="d-to" value="' + esc(custom.to) + '"></div></div>' : '') +
+    (olderLoading ? '<div class="note">Cargando registros antiguos…</div>' : '') +
     '<div class="card"><div class="k">Leche bebida</div>' +
       '<div class="bigml">' + fmtNum(s.ml) + ' <small>ml</small></div>' +
       '<div class="sub">' + s.feeds + (s.feeds === 1 ? ' toma' : ' tomas') +
@@ -291,16 +344,22 @@ function viewHistory(){
     if (!cur || cur.k !== k) { cur = { k: k, items: [] }; groups.push(cur); }
     cur.items.push(e);
   });
+  var more = store && store.loadedFrom() > 0;
   return '<header class="top"><h1>📋 Historial</h1></header>' +
     (groups.length ? groups.map(function(g){
       var ml = 0, f = 0, p = 0;
       g.items.forEach(function(e){ if (e.type === 'feed') { f++; ml += e.ml || 0; } else p++; });
       return '<div class="day"><b>' + fmtDayLabel(g.k, now) + '</b><span>' + fmtNum(ml) + ' ml · ' + f + ' tomas · ' + p + ' cacas</span></div>' +
         g.items.map(evRow).join('');
-    }).join('') : '<div class="empty">Aún no hay registros</div>');
+    }).join('') : '<div class="empty">Aún no hay registros</div>') +
+    (more ? (olderLoading ? '<div class="note">Cargando…</div>'
+                          : '<button class="link" data-act="all-history">Ver registros de hace más de 60 días</button>') : '');
 }
 
 function render(){
+  var ready = mode === 'ready';
+  document.body.classList.toggle('noTabs', !ready);
+  if (!ready) return;
   $('#app').innerHTML = tab === 'home' ? viewHome() : tab === 'stats' ? viewStats() : viewHistory();
   document.querySelectorAll('#tabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === tab); });
 }
@@ -314,6 +373,12 @@ function toast(msg, label, fn){
   t._fn = fn || null;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){ t.hidden = true; }, 5000);
+}
+function errText(e){
+  var c = (e && e.code) || '';
+  if (c.indexOf('permission-denied') >= 0) return 'Sin permiso en Firebase: revisa las reglas';
+  if (c.indexOf('unavailable') >= 0 || c.indexOf('network') >= 0) return 'Sin conexión';
+  return 'Error: ' + (c || (e && e.message) || 'desconocido');
 }
 
 /* ---------- hojas (ventanas inferiores) ---------- */
@@ -330,45 +395,41 @@ function stepper(id, val){
     '<span class="u">ml</span><button data-act="inc" data-for="' + id + '">+</button></div>';
 }
 function openSettings(){
-  openSheet('<h3>Cantidad por defecto</h3><p class="muted">Es lo que se apunta cada vez que pulsas “Toma”.</p>' +
-    '<div class="field">' + stepper('set-ml', db.settings.defaultMl || '') + '</div>' +
-    '<div class="btns"><button class="btn pri" data-act="save-settings">Guardar</button></div>');
+  openSheet('<h3>Ajustes</h3>' +
+    '<div class="field"><span class="lab">Cantidad por defecto de cada toma</span>' + stepper('set-ml', settings.defaultMl || '') + '</div>' +
+    '<div class="btns"><button class="btn pri" data-act="save-settings">Guardar</button></div>' +
+    '<h2>Datos</h2>' +
+    '<button class="btn sec" data-act="export">⬇️ Exportar a Excel (CSV)</button>' +
+    '<p class="muted" style="margin:6px 0 12px;font-size:14px">Cuenta: ' + esc(store && store.email) + '</p>' +
+    '<button class="btn del" data-act="logout">Cerrar sesión</button>');
 }
-function sheetForm(mode, ev){
+function sheetForm(formMode, ev){
   sheetType = ev.type;
-  openSheet('<h3>' + (mode === 'new' ? 'Nuevo registro' : ev.type === 'feed' ? '🍼 Toma' : '💩 Caca') + '</h3>' +
-    (mode === 'new'
+  openSheet('<h3>' + (formMode === 'new' ? 'Nuevo registro' : ev.type === 'feed' ? '🍼 Toma' : '💩 Caca') + '</h3>' +
+    (formMode === 'new'
       ? '<div class="seg"><button class="on" data-act="seg" data-v="feed">🍼 Toma</button><button data-act="seg" data-v="poop">💩 Caca</button></div>' : '') +
     '<div class="field"><span class="lab">Fecha y hora</span><input id="f-ts" type="datetime-local" value="' + toLocalInput(ev.ts) + '"></div>' +
     '<div class="field" id="f-mlbox"' + (ev.type === 'feed' ? '' : ' hidden') + '><span class="lab">Cantidad</span>' + stepper('f-ml', ev.ml) + '</div>' +
     '<div class="field"><span class="lab">Nota</span><textarea id="f-note" rows="3" placeholder="Opcional">' + esc(ev.note) + '</textarea></div>' +
-    '<div class="btns">' + (mode === 'edit' ? '<button class="btn del" data-act="del" data-id="' + ev.id + '">Eliminar</button>' : '') +
-    '<button class="btn pri" data-act="save-ev" data-mode="' + mode + '" data-id="' + (ev.id || '') + '">Guardar</button></div>');
+    '<div class="btns">' + (formMode === 'edit' ? '<button class="btn del" data-act="del" data-id="' + esc(ev.id) + '">Eliminar</button>' : '') +
+    '<button class="btn pri" data-act="save-ev" data-mode="' + formMode + '" data-id="' + esc(ev.id || '') + '">Guardar</button></div>');
 }
-function openEdit(id){
-  var ev = db.events.filter(function(e){ return e.id === id; })[0];
-  if (ev) sheetForm('edit', ev);
-}
-function openNew(){
-  sheetForm('new', { type: 'feed', ts: Date.now(), ml: db.settings.defaultMl || '', note: '' });
-}
+function findEvent(id){ return events.filter(function(e){ return e.id === id; })[0]; }
+function openEdit(id){ var ev = findEvent(id); if (ev) sheetForm('edit', ev); }
+function openNew(){ sheetForm('new', { type: 'feed', ts: Date.now(), ml: settings.defaultMl || '', note: '' }); }
 
 /* ---------- acciones ---------- */
-function addEvent(ev){ db.events.push(ev); saveDb(); render(); }
-function removeEvent(id){
-  db.events = db.events.filter(function(e){ return e.id !== id; }); saveDb(); render();
-}
 function quickFeed(){
-  if (!db.settings.defaultMl) { openSettings(); return; }
+  if (!settings.defaultMl) { openSettings(); return; }
   var now = Date.now(); if (now - lastQuick.feed < 1200) return; lastQuick.feed = now;
-  var ev = { id: uid(), type: 'feed', ts: now, ml: db.settings.defaultMl, note: '' };
-  addEvent(ev);
-  toast('Toma de ' + ev.ml + ' ml apuntada', 'Deshacer', function(){ removeEvent(ev.id); });
+  var ev = { id: uid(), type: 'feed', ts: now, ml: settings.defaultMl, note: '' };
+  store.put(ev);
+  toast('Toma de ' + ev.ml + ' ml apuntada', 'Deshacer', function(){ store.remove(ev.id); });
 }
 function quickPoop(){
   var now = Date.now(); if (now - lastQuick.poop < 1200) return; lastQuick.poop = now;
-  var ev = { id: uid(), type: 'poop', ts: now, note: '' };
-  addEvent(ev);
+  var ev = { id: uid(), type: 'poop', ts: now, ml: null, note: '' };
+  store.put(ev);
   toast('Caca apuntada', 'Añadir nota', function(){ openEdit(ev.id); });
 }
 function bump(id, delta){
@@ -378,28 +439,58 @@ function bump(id, delta){
 function saveSettings(){
   var v = parseInt($('#set-ml').value, 10);
   if (!(v > 0 && v <= 2000)) { toast('Pon una cantidad válida'); return; }
-  db.settings.defaultMl = v; saveDb(); closeSheet(); render();
+  settings.defaultMl = v; store.setDefaultMl(v); closeSheet(); render();
 }
-function saveEvent(mode, id){
+function saveEvent(formMode, id){
   var ts = fromLocalInput($('#f-ts').value);
   if (ts == null) { toast('Fecha u hora no válida'); return; }
-  var note = $('#f-note').value.trim(), ml = null;
-  if (sheetType === 'feed') {
+  var note = $('#f-note').value.trim(), ml = null, type = sheetType;
+  if (formMode === 'edit') { var old = findEvent(id); if (!old) { closeSheet(); return; } type = old.type; }
+  if (type === 'feed') {
     ml = parseInt($('#f-ml').value, 10);
     if (!(ml > 0 && ml <= 2000)) { toast('Pon una cantidad válida'); return; }
   }
-  if (mode === 'new') {
-    db.events.push({ id: uid(), type: sheetType, ts: ts, ml: ml, note: note });
-  } else {
-    var ev = db.events.filter(function(e){ return e.id === id; })[0];
-    if (ev) { ev.ts = ts; ev.note = note; if (ev.type === 'feed') ev.ml = ml; }
-  }
-  saveDb(); closeSheet(); render();
+  store.put({ id: formMode === 'new' ? uid() : id, type: type, ts: ts, ml: ml, note: note });
+  closeSheet(); render();
 }
-var delArmed = false;
-function deleteEvent(btn){
-  if (!delArmed) { delArmed = true; btn.textContent = '¿Seguro?'; setTimeout(function(){ delArmed = false; }, 3000); return; }
-  delArmed = false; removeEvent(btn.dataset.id); closeSheet();
+var armed = null;
+function confirmTap(btn, key, fn){
+  if (armed !== key) { armed = key; btn.textContent = '¿Seguro?'; setTimeout(function(){ if (armed === key) armed = null; }, 3000); return; }
+  armed = null; fn();
+}
+function shareCsv(name, text){
+  var blob = new Blob(['﻿' + text], { type: 'text/csv;charset=utf-8' });
+  var file = null;
+  try { file = new File([blob], name, { type: 'text/csv' }); } catch (e) {}
+  if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({ files: [file], title: name }).catch(function(){});
+    return;
+  }
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+}
+function exportCsv(btn){
+  btn.disabled = true; btn.textContent = 'Preparando…';
+  store.ensureFrom(0).then(function(){
+    btn.disabled = false; btn.textContent = '⬇️ Exportar a Excel (CSV)';
+    shareCsv('mi-bebe-' + toDateInput(Date.now()) + '.csv', buildCsv(events));
+  }, function(e){
+    btn.disabled = false; btn.textContent = '⬇️ Exportar a Excel (CSV)'; toast(errText(e));
+  });
+}
+function doLogin(btn){
+  var email = $('#l-email').value.trim(), pass = $('#l-pass').value;
+  var err = $('#l-err');
+  if (!email || !pass) { err.textContent = 'Pon email y contraseña'; return; }
+  btn.disabled = true; err.textContent = '';
+  loginApi.signIn(email, pass).catch(function(e){
+    btn.disabled = false;
+    var c = (e && e.code) || '';
+    err.textContent = /invalid-credential|wrong-password|user-not-found|invalid-email/.test(c) ? 'Email o contraseña incorrectos'
+      : /network/.test(c) ? 'Sin conexión' : /too-many/.test(c) ? 'Demasiados intentos, espera un poco' : 'No se pudo entrar (' + c + ')';
+  });
 }
 function setTab(t){ tab = t; closeSheet(); render(); window.scrollTo(0, 0); }
 
@@ -414,7 +505,11 @@ var actions = {
   inc: function(b){ bump(b.dataset.for, 10); },
   'save-settings': saveSettings,
   'save-ev': function(b){ saveEvent(b.dataset.mode, b.dataset.id); },
-  del: deleteEvent,
+  del: function(b){ confirmTap(b, 'del', function(){ store.remove(b.dataset.id); closeSheet(); render(); }); },
+  logout: function(b){ confirmTap(b, 'logout', function(){ closeSheet(); store.logout(); }); },
+  'export': exportCsv,
+  'all-history': function(){ loadOlder(0); },
+  login: doLogin,
   seg: function(b){
     sheetType = b.dataset.v;
     document.querySelectorAll('.seg button').forEach(function(x){ x.classList.toggle('on', x === b); });
@@ -438,18 +533,42 @@ document.addEventListener('change', function(e){
   if (e.target.id === 'd-from') { custom.from = e.target.value; render(); }
   if (e.target.id === 'd-to') { custom.to = e.target.value; render(); }
 });
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && mode === 'login' && (e.target.id === 'l-pass' || e.target.id === 'l-email')) doLogin($('[data-act=login]'));
+});
+window.addEventListener('online', function(){ online = true; render(); });
+window.addEventListener('offline', function(){ online = false; render(); });
 document.addEventListener('visibilitychange', function(){ if (!document.hidden && tab === 'home' && !sheetOpen) render(); });
 setInterval(function(){ if (tab === 'home' && !sheetOpen) render(); }, 30000);
 
-/* La app Android llama a esto al pulsar "atrás": devuelve true si lo gestiona aquí */
-window.onAndroidBack = function(){
-  if (sheetOpen) { closeSheet(); return true; }
-  if (tab !== 'home') { setTab('home'); return true; }
-  return false;
+/* ---------- conexión con la capa de datos (sync.js) ---------- */
+window.App = {
+  setState: function(s, arg){
+    mode = s; closeSheet();
+    if (s !== 'ready') {
+      store = null; events = []; settings = { defaultMl: null }; askedDefault = false; tab = 'home';
+      if (s === 'login') loginApi = arg;
+      $('#app').innerHTML = s === 'login' ? viewLogin() : s === 'setup' ? viewSetup() : viewLoading();
+      render();
+      return;
+    }
+    store = arg;
+    store.onEvents(function(list){ events = list; render(); });
+    store.onSettings(function(s2, meta){
+      settings.defaultMl = s2.defaultMl || null;
+      render();
+      if (meta.known && !settings.defaultMl && !askedDefault && !sheetOpen) { askedDefault = true; openSettings(); }
+    });
+    store.onStatus(function(st){ syncPending = !!st.pending; render(); });
+    render();
+  },
+  syncError: function(e){ toast(errText(e)); }
 };
 
-render();
-if (db.settings.defaultMl == null) openSettings();
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
 </script>
+<script src="sync.js" defer></script>
 </body>
 </html>

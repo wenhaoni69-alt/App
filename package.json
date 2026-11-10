@@ -1,0 +1,12 @@
+{
+  "name": "mi-bebe",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {
+    "build": "rm -rf dist && mkdir -p dist && cp -r web/. dist/ && esbuild src/sync.js --bundle --minify --format=iife --target=es2020,safari15 --outfile=dist/sync.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "firebase": "^13.2.0"
+  }
+}
