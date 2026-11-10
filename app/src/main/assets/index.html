@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Mi bebé</title>
+<style>
+:root{
+  --bg:#FBF6F1; --card:#fff; --ink:#2B2A33; --muted:#7A7685; --line:#EDE6DF;
+  --milk:#3F7DF0; --milk-soft:#E6EEFE; --poop:#A8680F; --poop-soft:#FBEBD0; --danger:#D64545;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px}
+body.lock{overflow:hidden}
+#app{padding:12px 16px calc(92px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto}
+button{font-family:inherit;cursor:pointer}
+h1{font-size:22px;margin:0}
+h2{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:22px 4px 8px}
+h3{font-size:20px;margin:0 0 14px}
+.top{display:flex;align-items:center;justify-content:space-between;margin:4px 0 14px}
+.icon{border:0;background:var(--card);border-radius:14px;width:44px;height:44px;font-size:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;border:0;border-radius:26px;color:#fff;margin-bottom:12px;box-shadow:0 6px 16px rgba(0,0,0,.14);transition:transform .08s}
+.big:active{transform:scale(.97)}
+.big .t{font-size:28px;font-weight:800}
+.big .s{font-size:18px;opacity:.92;font-weight:600}
+.big.milk{background:var(--milk);padding:34px 16px}
+.big.poop{background:var(--poop);padding:20px 16px}
+.big.poop .t{font-size:24px}
+.link{display:block;width:100%;border:0;background:none;color:var(--milk);font-size:16px;font-weight:600;padding:10px;margin-bottom:6px}
+.card{background:var(--card);border-radius:20px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 12px}
+.k{font-size:13px;color:var(--muted);font-weight:600}
+.v{font-size:20px;font-weight:800;margin-top:2px}
+.sub{font-size:13px;color:var(--muted);margin-top:2px}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;text-align:center}
+.trio .v{font-size:22px}
+.ev{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:var(--card);border-radius:18px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.05);color:var(--ink)}
+.ev-ico{flex:none;width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.ev-ico.feed{background:var(--milk-soft)} .ev-ico.poop{background:var(--poop-soft)}
+.ev-main{flex:1;min-width:0}
+.ev-main b{font-size:17px;display:block}
+.ev-main em{display:block;font-style:normal;font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-time{font-size:15px;font-weight:700;color:var(--muted)}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px}
+.chip{flex:none;border:0;background:var(--card);color:var(--ink);padding:10px 16px;border-radius:999px;font-size:15px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.chip.on{background:var(--milk);color:#fff}
+.dates{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.dates div{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:600}
+input[type=date],input[type=datetime-local],input[type=number],textarea{font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+.bigml{font-size:44px;font-weight:800;color:var(--milk);line-height:1.1}
+.bigml small{font-size:20px;font-weight:700}
+.chart{display:flex;align-items:flex-end;gap:3px;height:150px;margin-top:14px}
+.bar{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.bar .val{font-size:11px;color:var(--muted);height:14px;line-height:14px;white-space:nowrap}
+.bar .fill{width:100%;background:var(--milk);border-radius:6px 6px 2px 2px;min-height:2px}
+.bar .fill.zero{background:var(--line)}
+.bar .lbl{font-size:11px;color:var(--muted);height:16px;line-height:16px;margin-top:3px;white-space:nowrap}
+.day{display:flex;justify-content:space-between;align-items:baseline;margin:20px 4px 8px}
+.day b{font-size:16px;text-transform:capitalize}
+.day span{font-size:13px;color:var(--muted)}
+#tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+#tabs button{flex:1;border:0;background:none;padding:10px 0 8px;font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+#tabs button span{font-size:22px}
+#tabs button.on{color:var(--milk)}
+.back{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:10}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-radius:26px 26px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom));z-index:11;max-height:90vh;overflow:auto;max-width:560px;margin:0 auto}
+.sheet p{margin:-6px 0 12px}
+.muted{color:var(--muted)}
+.field{margin-bottom:14px}
+.lab{display:block;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:6px}
+.step{display:flex;align-items:center;gap:10px}
+.step button{flex:none;width:52px;height:52px;border:0;border-radius:16px;background:var(--milk-soft);color:var(--milk);font-size:28px;font-weight:800}
+.step input{text-align:center;font-size:24px;font-weight:800;padding:10px 4px}
+.step .u{font-weight:700;color:var(--muted)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.seg button{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px;font-size:16px;font-weight:700;color:var(--ink)}
+.seg button.on{border-color:var(--milk);background:var(--milk-soft);color:var(--milk)}
+.btns{display:flex;gap:10px;margin-top:6px}
+.btn{flex:1;border:0;border-radius:16px;padding:16px;font-size:17px;font-weight:800}
+.btn.pri{background:var(--milk);color:#fff}
+.btn.del{background:#fde8e8;color:var(--danger)}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:20;background:#2B2A33;color:#fff;border-radius:16px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:536px;margin:0 auto;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+#toast button{border:0;background:none;color:#9DBBFF;font-weight:800;font-size:15px;padding:6px 4px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav id="tabs">
+  <button data-tab="home"><span>🏠</span>Inicio</button>
+  <button data-tab="stats"><span>📊</span>Resumen</button>
+  <button data-tab="history"><span>📋</span>Historial</button>
+</nav>
+<div id="sheet-root"></div>
+<div id="toast" hidden></div>
+
+<script>
+'use strict';
+var KEY = 'mibebe.v1';
+var H = 3600000, DAY = 86400000;
+function pad(n){ return String(n).padStart(2, '0'); }
+function $(s){ return document.querySelector(s); }
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+/* ---------- datos ---------- */
+function loadDb(){
+  try {
+    var d = JSON.parse(localStorage.getItem(KEY));
+    if (d && Array.isArray(d.events)) {
+      return { settings: Object.assign({ defaultMl: null }, d.settings), events: d.events };
+    }
+  } catch (e) {}
+  return { settings: { defaultMl: null }, events: [] };
+}
+var db = loadDb();
+function saveDb(){ try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} }
+
+/* ---------- lógica (fechas, resumen) ---------- */
+function startOfDay(ts){ var d = new Date(ts); d.setHours(0, 0, 0, 0); return d.getTime(); }
+function startOfHour(ts){ var d = new Date(ts); d.setMinutes(0, 0, 0); return d.getTime(); }
+function parseDateInput(v){
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || '');
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]).getTime() : null;
+}
+function toDateInput(ts){ var d = new Date(ts); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function toLocalInput(ts){ return toDateInput(ts) + 'T' + pad(new Date(ts).getHours()) + ':' + pad(new Date(ts).getMinutes()); }
+function fromLocalInput(v){ var t = new Date(v).getTime(); return isNaN(t) ? null : t; }
+
+function rangeBounds(kind, now, custom){
+  if (kind === '24h') return { from: now - DAY, to: now, days: 1 };
+  if (kind === 'today') return { from: startOfDay(now), to: now, days: 1 };
+  if (kind === '7d' || kind === '30d') {
+    var n = kind === '7d' ? 7 : 30;
+    var d = new Date(startOfDay(now)); d.setDate(d.getDate() - (n - 1));
+    return { from: d.getTime(), to: now, days: n };
+  }
+  var f = parseDateInput(custom && custom.from), t = parseDateInput(custom && custom.to);
+  if (f == null) f = startOfDay(now);
+  if (t == null) t = startOfDay(now);
+  if (t < f) { var x = f; f = t; t = x; }
+  var e = new Date(t); e.setDate(e.getDate() + 1);
+  return { from: f, to: e.getTime() - 1, days: Math.max(1, Math.round((e.getTime() - f) / DAY)) };
+}
+function inRange(ev, r){ return ev.ts >= r.from && ev.ts <= r.to; }
+function summarize(events, r){
+  var ml = 0, feeds = 0, poops = 0;
+  events.forEach(function(e){
+    if (!inRange(e, r)) return;
+    if (e.type === 'feed') { feeds++; ml += e.ml || 0; }
+    else if (e.type === 'poop') poops++;
+  });
+  return { ml: ml, feeds: feeds, poops: poops, days: r.days,
+           avgFeed: feeds ? Math.round(ml / feeds) : 0, avgDay: Math.round(ml / r.days) };
+}
+function buckets(events, r){
+  var out = [], i, s;
+  if (r.to - r.from <= DAY + H) {
+    var st = startOfHour(r.from), n = Math.ceil((r.to - st) / H);
+    for (i = 0; i < n; i++) { s = st + i * H; out.push({ start: s, end: s + H, hourly: true }); }
+  } else {
+    var d = new Date(startOfDay(r.from));
+    while (d.getTime() <= r.to) {
+      s = d.getTime(); d.setDate(d.getDate() + 1);
+      out.push({ start: s, end: d.getTime(), hourly: false });
+    }
+  }
+  out.forEach(function(b){ b.ml = 0; b.feeds = 0; b.poops = 0; });
+  events.forEach(function(e){
+    if (!inRange(e, r)) return;
+    for (var k = 0; k < out.length; k++) {
+      if (e.ts >= out[k].start && e.ts < out[k].end) {
+        if (e.type === 'feed') { out[k].feeds++; out[k].ml += e.ml || 0; }
+        else if (e.type === 'poop') out[k].poops++;
+        break;
+      }
+    }
+  });
+  return out;
+}
+
+/* ---------- formato ---------- */
+function fmtTime(ts){ var d = new Date(ts); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+function fmtNum(n){ return Number(n).toLocaleString('es-ES'); }
+function fmtDayLabel(ts, now){
+  var d0 = startOfDay(now), d1 = startOfDay(ts);
+  if (d1 === d0) return 'Hoy';
+  var y = new Date(d0); y.setDate(y.getDate() - 1);
+  if (d1 === y.getTime()) return 'Ayer';
+  return new Date(ts).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+function ago(ts, now){
+  var m = Math.max(0, Math.floor((now - ts) / 60000));
+  if (m < 1) return 'hace un momento';
+  if (m < 60) return 'hace ' + m + ' min';
+  var h = Math.floor(m / 60), mm = m % 60;
+  if (h < 24) return 'hace ' + h + ' h' + (mm ? ' ' + mm + ' min' : '');
+  var d = Math.floor(h / 24);
+  return 'hace ' + d + ' d' + (h % 24 ? ' ' + (h % 24) + ' h' : '');
+}
+function sorted(){ return db.events.slice().sort(function(a, b){ return b.ts - a.ts; }); }
+
+/* ---------- estado de la interfaz ---------- */
+var tab = 'home', range = '24h', custom = { from: '', to: '' };
+var sheetOpen = false, sheetType = 'feed', lastQuick = { feed: 0, poop: 0 };
+
+function evRow(e){
+  var isFeed = e.type === 'feed';
+  return '<button class="ev" data-act="edit" data-id="' + e.id + '">' +
+    '<span class="ev-ico ' + e.type + '">' + (isFeed ? '🍼' : '💩') + '</span>' +
+    '<span class="ev-main"><b>' + (isFeed ? fmtNum(e.ml) + ' ml' : 'Caca') + '</b>' +
+    (e.note ? '<em>' + esc(e.note) + '</em>' : '') + '</span>' +
+    '<span class="ev-time">' + fmtTime(e.ts) + '</span></button>';
+}
+
+function viewHome(){
+  var now = Date.now(), evs = sorted();
+  var lastFeed = evs.filter(function(e){ return e.type === 'feed'; })[0];
+  var lastPoop = evs.filter(function(e){ return e.type === 'poop'; })[0];
+  var t = summarize(db.events, rangeBounds('today', now));
+  var ml = db.settings.defaultMl;
+  return '<header class="top"><h1>🍼 Mi bebé</h1><button class="icon" data-act="settings" aria-label="Ajustes">⚙️</button></header>' +
+    '<button class="big milk" data-act="feed"><span class="t">🍼 Toma</span><span class="s">' +
+      (ml ? fmtNum(ml) + ' ml' : 'Toca para definir la cantidad') + '</span></button>' +
+    '<button class="big poop" data-act="poop"><span class="t">💩 Caca</span></button>' +
+    '<button class="link" data-act="new">＋ Otra cantidad, hora o nota…</button>' +
+    '<div class="two">' +
+      '<div class="card"><div class="k">Última toma</div><div class="v">' + (lastFeed ? ago(lastFeed.ts, now) : '—') + '</div>' +
+        '<div class="sub">' + (lastFeed ? fmtTime(lastFeed.ts) + ' · ' + fmtNum(lastFeed.ml) + ' ml' : 'Sin registros') + '</div></div>' +
+      '<div class="card"><div class="k">Última caca</div><div class="v">' + (lastPoop ? ago(lastPoop.ts, now) : '—') + '</div>' +
+        '<div class="sub">' + (lastPoop ? fmtTime(lastPoop.ts) : 'Sin registros') + '</div></div>' +
+    '</div>' +
+    '<div class="card"><div class="k">Hoy</div><div class="trio">' +
+      '<div><div class="v">' + fmtNum(t.ml) + '</div><div class="sub">ml</div></div>' +
+      '<div><div class="v">' + t.feeds + '</div><div class="sub">tomas</div></div>' +
+      '<div><div class="v">' + t.poops + '</div><div class="sub">cacas</div></div>' +
+    '</div></div>' +
+    '<h2>Últimos registros</h2>' +
+    (evs.length ? evs.slice(0, 6).map(evRow).join('') : '<div class="empty">Aún no hay registros</div>');
+}
+
+function chartHtml(b){
+  var max = Math.max.apply(null, b.map(function(x){ return x.ml; }).concat([1]));
+  var showVal = b.length <= 8;
+  var step = b.length > 12 ? Math.ceil(b.length / 8) : 1;
+  return '<div class="chart">' + b.map(function(x, i){
+    var h = x.ml ? Math.max(3, Math.round(x.ml / max * 115)) : 2;
+    var lbl = '';
+    if (i % step === 0) {
+      lbl = x.hourly ? pad(new Date(x.start).getHours())
+          : (b.length <= 8 ? new Date(x.start).toLocaleDateString('es-ES', { weekday: 'short' }).replace('.', '')
+                           : String(new Date(x.start).getDate()));
+    }
+    return '<div class="bar"><div class="val">' + (showVal && x.ml ? fmtNum(x.ml) : '') + '</div>' +
+      '<div class="fill' + (x.ml ? '' : ' zero') + '" style="height:' + h + 'px"></div>' +
+      '<div class="lbl">' + lbl + '</div></div>';
+  }).join('') + '</div>';
+}
+
+function viewStats(){
+  var now = Date.now();
+  var chips = [['24h', '24 h'], ['today', 'Hoy'], ['7d', '7 días'], ['30d', '30 días'], ['custom', 'Fechas']];
+  var r = rangeBounds(range, now, custom);
+  var s = summarize(db.events, r), b = buckets(db.events, r);
+  return '<header class="top"><h1>📊 Resumen</h1></header>' +
+    '<div class="chips">' + chips.map(function(c){
+      return '<button class="chip' + (range === c[0] ? ' on' : '') + '" data-act="range" data-v="' + c[0] + '">' + c[1] + '</button>';
+    }).join('') + '</div>' +
+    (range === 'custom'
+      ? '<div class="dates"><div>Desde<input type="date" id="d-from" value="' + esc(custom.from) + '"></div>' +
+        '<div>Hasta<input type="date" id="d-to" value="' + esc(custom.to) + '"></div></div>' : '') +
+    '<div class="card"><div class="k">Leche bebida</div>' +
+      '<div class="bigml">' + fmtNum(s.ml) + ' <small>ml</small></div>' +
+      '<div class="sub">' + s.feeds + (s.feeds === 1 ? ' toma' : ' tomas') +
+        (s.feeds ? ' · media ' + fmtNum(s.avgFeed) + ' ml por toma' : '') +
+        (s.days >= 2 ? ' · ' + fmtNum(s.avgDay) + ' ml al día' : '') + '</div>' +
+      chartHtml(b) + '</div>' +
+    '<div class="two" style="margin-top:12px"><div class="card"><div class="k">Cacas</div><div class="v">💩 ' + s.poops + '</div></div>' +
+    '<div class="card"><div class="k">Tomas</div><div class="v">🍼 ' + s.feeds + '</div></div></div>';
+}
+
+function viewHistory(){
+  var now = Date.now(), evs = sorted(), groups = [], cur = null;
+  evs.forEach(function(e){
+    var k = startOfDay(e.ts);
+    if (!cur || cur.k !== k) { cur = { k: k, items: [] }; groups.push(cur); }
+    cur.items.push(e);
+  });
+  return '<header class="top"><h1>📋 Historial</h1></header>' +
+    (groups.length ? groups.map(function(g){
+      var ml = 0, f = 0, p = 0;
+      g.items.forEach(function(e){ if (e.type === 'feed') { f++; ml += e.ml || 0; } else p++; });
+      return '<div class="day"><b>' + fmtDayLabel(g.k, now) + '</b><span>' + fmtNum(ml) + ' ml · ' + f + ' tomas · ' + p + ' cacas</span></div>' +
+        g.items.map(evRow).join('');
+    }).join('') : '<div class="empty">Aún no hay registros</div>');
+}
+
+function render(){
+  $('#app').innerHTML = tab === 'home' ? viewHome() : tab === 'stats' ? viewStats() : viewHistory();
+  document.querySelectorAll('#tabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === tab); });
+}
+
+/* ---------- avisos ---------- */
+var toastTimer = null;
+function toast(msg, label, fn){
+  var t = $('#toast');
+  t.innerHTML = '<span>' + esc(msg) + '</span>' + (label ? '<button data-act="toast-action">' + esc(label) + '</button>' : '');
+  t.hidden = false;
+  t._fn = fn || null;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.hidden = true; }, 5000);
+}
+
+/* ---------- hojas (ventanas inferiores) ---------- */
+function openSheet(html){
+  $('#sheet-root').innerHTML = '<div class="back" data-act="close"></div><div class="sheet" role="dialog">' + html + '</div>';
+  sheetOpen = true; document.body.classList.add('lock');
+}
+function closeSheet(){
+  $('#sheet-root').innerHTML = ''; sheetOpen = false; document.body.classList.remove('lock');
+}
+function stepper(id, val){
+  return '<div class="step"><button data-act="dec" data-for="' + id + '">−</button>' +
+    '<input id="' + id + '" type="number" inputmode="numeric" min="1" max="2000" value="' + esc(val) + '">' +
+    '<span class="u">ml</span><button data-act="inc" data-for="' + id + '">+</button></div>';
+}
+function openSettings(){
+  openSheet('<h3>Cantidad por defecto</h3><p class="muted">Es lo que se apunta cada vez que pulsas “Toma”.</p>' +
+    '<div class="field">' + stepper('set-ml', db.settings.defaultMl || '') + '</div>' +
+    '<div class="btns"><button class="btn pri" data-act="save-settings">Guardar</button></div>');
+}
+function sheetForm(mode, ev){
+  sheetType = ev.type;
+  openSheet('<h3>' + (mode === 'new' ? 'Nuevo registro' : ev.type === 'feed' ? '🍼 Toma' : '💩 Caca') + '</h3>' +
+    (mode === 'new'
+      ? '<div class="seg"><button class="on" data-act="seg" data-v="feed">🍼 Toma</button><button data-act="seg" data-v="poop">💩 Caca</button></div>' : '') +
+    '<div class="field"><span class="lab">Fecha y hora</span><input id="f-ts" type="datetime-local" value="' + toLocalInput(ev.ts) + '"></div>' +
+    '<div class="field" id="f-mlbox"' + (ev.type === 'feed' ? '' : ' hidden') + '><span class="lab">Cantidad</span>' + stepper('f-ml', ev.ml) + '</div>' +
+    '<div class="field"><span class="lab">Nota</span><textarea id="f-note" rows="3" placeholder="Opcional">' + esc(ev.note) + '</textarea></div>' +
+    '<div class="btns">' + (mode === 'edit' ? '<button class="btn del" data-act="del" data-id="' + ev.id + '">Eliminar</button>' : '') +
+    '<button class="btn pri" data-act="save-ev" data-mode="' + mode + '" data-id="' + (ev.id || '') + '">Guardar</button></div>');
+}
+function openEdit(id){
+  var ev = db.events.filter(function(e){ return e.id === id; })[0];
+  if (ev) sheetForm('edit', ev);
+}
+function openNew(){
+  sheetForm('new', { type: 'feed', ts: Date.now(), ml: db.settings.defaultMl || '', note: '' });
+}
+
+/* ---------- acciones ---------- */
+function addEvent(ev){ db.events.push(ev); saveDb(); render(); }
+function removeEvent(id){
+  db.events = db.events.filter(function(e){ return e.id !== id; }); saveDb(); render();
+}
+function quickFeed(){
+  if (!db.settings.defaultMl) { openSettings(); return; }
+  var now = Date.now(); if (now - lastQuick.feed < 1200) return; lastQuick.feed = now;
+  var ev = { id: uid(), type: 'feed', ts: now, ml: db.settings.defaultMl, note: '' };
+  addEvent(ev);
+  toast('Toma de ' + ev.ml + ' ml apuntada', 'Deshacer', function(){ removeEvent(ev.id); });
+}
+function quickPoop(){
+  var now = Date.now(); if (now - lastQuick.poop < 1200) return; lastQuick.poop = now;
+  var ev = { id: uid(), type: 'poop', ts: now, note: '' };
+  addEvent(ev);
+  toast('Caca apuntada', 'Añadir nota', function(){ openEdit(ev.id); });
+}
+function bump(id, delta){
+  var el = $('#' + id); var v = parseInt(el.value, 10);
+  el.value = Math.min(2000, Math.max(1, (isNaN(v) ? 0 : v) + delta));
+}
+function saveSettings(){
+  var v = parseInt($('#set-ml').value, 10);
+  if (!(v > 0 && v <= 2000)) { toast('Pon una cantidad válida'); return; }
+  db.settings.defaultMl = v; saveDb(); closeSheet(); render();
+}
+function saveEvent(mode, id){
+  var ts = fromLocalInput($('#f-ts').value);
+  if (ts == null) { toast('Fecha u hora no válida'); return; }
+  var note = $('#f-note').value.trim(), ml = null;
+  if (sheetType === 'feed') {
+    ml = parseInt($('#f-ml').value, 10);
+    if (!(ml > 0 && ml <= 2000)) { toast('Pon una cantidad válida'); return; }
+  }
+  if (mode === 'new') {
+    db.events.push({ id: uid(), type: sheetType, ts: ts, ml: ml, note: note });
+  } else {
+    var ev = db.events.filter(function(e){ return e.id === id; })[0];
+    if (ev) { ev.ts = ts; ev.note = note; if (ev.type === 'feed') ev.ml = ml; }
+  }
+  saveDb(); closeSheet(); render();
+}
+var delArmed = false;
+function deleteEvent(btn){
+  if (!delArmed) { delArmed = true; btn.textContent = '¿Seguro?'; setTimeout(function(){ delArmed = false; }, 3000); return; }
+  delArmed = false; removeEvent(btn.dataset.id); closeSheet();
+}
+function setTab(t){ tab = t; closeSheet(); render(); window.scrollTo(0, 0); }
+
+var actions = {
+  feed: quickFeed,
+  poop: quickPoop,
+  'new': openNew,
+  settings: openSettings,
+  edit: function(b){ openEdit(b.dataset.id); },
+  close: closeSheet,
+  dec: function(b){ bump(b.dataset.for, -10); },
+  inc: function(b){ bump(b.dataset.for, 10); },
+  'save-settings': saveSettings,
+  'save-ev': function(b){ saveEvent(b.dataset.mode, b.dataset.id); },
+  del: deleteEvent,
+  seg: function(b){
+    sheetType = b.dataset.v;
+    document.querySelectorAll('.seg button').forEach(function(x){ x.classList.toggle('on', x === b); });
+    $('#f-mlbox').hidden = sheetType !== 'feed';
+  },
+  range: function(b){
+    range = b.dataset.v;
+    if (range === 'custom' && !custom.from) { custom.from = custom.to = toDateInput(Date.now()); }
+    render();
+  },
+  'toast-action': function(){ var t = $('#toast'); var f = t._fn; t.hidden = true; if (f) f(); }
+};
+
+document.addEventListener('click', function(e){
+  var t = e.target.closest('[data-act]');
+  if (t && actions[t.dataset.act]) { actions[t.dataset.act](t); return; }
+  var tb = e.target.closest('#tabs button');
+  if (tb) setTab(tb.dataset.tab);
+});
+document.addEventListener('change', function(e){
+  if (e.target.id === 'd-from') { custom.from = e.target.value; render(); }
+  if (e.target.id === 'd-to') { custom.to = e.target.value; render(); }
+});
+document.addEventListener('visibilitychange', function(){ if (!document.hidden && tab === 'home' && !sheetOpen) render(); });
+setInterval(function(){ if (tab === 'home' && !sheetOpen) render(); }, 30000);
+
+/* La app Android llama a esto al pulsar "atrás": devuelve true si lo gestiona aquí */
+window.onAndroidBack = function(){
+  if (sheetOpen) { closeSheet(); return true; }
+  if (tab !== 'home') { setTab('home'); return true; }
+  return false;
+};
+
+render();
+if (db.settings.defaultMl == null) openSettings();
+</script>
+</body>
+</html>
